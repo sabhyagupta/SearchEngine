@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;index/words.txt&apos; to &apos;Stop_Words_List&apos;" description="Rename resource &apos;words.txt&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="words.txt" name="Stop_Words_List" stamp="1457140314192" updateReferences="true"/>
+</session>

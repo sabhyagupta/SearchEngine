@@ -1,0 +1,17 @@
+127.0.0.1 - - [11/Feb/2016:17:05:30 -0800] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:05:34 -0800] "GET /SearchEngine/ HTTP/1.1" 200 2960
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:05:34 -0800] "GET /SearchEngine/src/main/webapp/WEB-INF/pages/Main.css HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:05:35 -0800] "GET /SearchEngine/IG2.jpg HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:14 -0800] "POST /SearchEngine/search.html HTTP/1.1" 200 1911
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:20 -0800] "GET /SearchEngine/src/main/webapp/WEB-INF/pages/Main.css HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:20 -0800] "GET /SearchEngine/IG2.jpg HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:33 -0800] "POST /SearchEngine/search.html HTTP/1.1" 200 1911
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:37 -0800] "GET /SearchEngine/src/main/webapp/WEB-INF/pages/Main.css HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:37 -0800] "GET /SearchEngine/IG2.jpg HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:40 -0800] "POST /SearchEngine/search.html HTTP/1.1" 200 1911
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:45 -0800] "GET /SearchEngine/src/main/webapp/WEB-INF/pages/Main.css HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:06:45 -0800] "GET /SearchEngine/IG2.jpg HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:07:45 -0800] "GET /SearchEngine/src/main/webapp/WEB-INF/pages/Main.css HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:07:46 -0800] "GET /SearchEngine/IG2.jpg HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:08:37 -0800] "GET /SearchEngine/src/main/webapp/WEB-INF/pages/Main.css HTTP/1.1" 404 949
+0:0:0:0:0:0:0:1 - - [11/Feb/2016:17:08:39 -0800] "GET /SearchEngine/IG2.jpg HTTP/1.1" 404 949

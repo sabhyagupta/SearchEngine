@@ -1,0 +1,325 @@
+package crawler;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.UUID;
+
+import netscape.ldap.util.GetOpt;
+
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.sax.Link;
+import org.apache.tika.sax.LinkContentHandler;
+import org.apache.tika.sax.TeeContentHandler;
+import org.apache.tika.sax.ToHTMLContentHandler;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
+public class Crawl {
+
+    int h = 1;
+
+    int i = 1;
+
+    @SuppressWarnings("unchecked")
+    public void crawl( String Url, String depth ) throws Exception
+    {
+
+        // opening url pool
+        URL url = new URL( Url );
+        // creates url connection
+        URLConnection hpCon = url.openConnection();
+        // reads from connected url
+        InputStream input = url.openStream();
+
+        // creates new file dir
+        File theDir = new File( "D:\\Neil" );
+        if( !theDir.exists() )
+        {
+            try
+            {
+                theDir.mkdir();
+            }
+            catch( SecurityException se )
+            {
+            }
+        }
+        // Initialize tika dependency methods
+        LinkContentHandler linkHandler = new LinkContentHandler();
+        // creates connection to write html body
+        ContentHandler textHandler = new BodyContentHandler();
+        ToHTMLContentHandler toHTMLHandler = new ToHTMLContentHandler();
+        TeeContentHandler teeHandler = new TeeContentHandler( linkHandler,
+            textHandler, toHTMLHandler );
+        Metadata metadata = new Metadata();
+        // passes the html content to tika parser
+        ParseContext parseContext = new ParseContext();
+        AutoDetectParser parser = new AutoDetectParser();
+
+        // parse the incoming url
+        parser.parse( input, teeHandler, metadata, parseContext );
+
+        JSONObject obj = new JSONObject();
+        JSONArray company = new JSONArray();
+
+        // get all the links in a list
+        List<Link> links = linkHandler.getLinks();
+        // returns the collected links
+        ArrayList<String> linklist2 = new ArrayList<String>();
+        Queue<String> myQueue = new LinkedList<String>();
+
+        // put all the data in json object
+        obj.put( "Title", metadata.get( "title" ) );
+        obj.put( "URL", url );
+        obj.put( "Content-Type", hpCon.getContentType() );
+        obj.put( "Last entry date", new Date( hpCon.getLastModified() ) );
+
+        @SuppressWarnings("unused")
+        String dir = "D:\\Neil";
+        try
+        {
+            // gets the content type of html
+            String w = hpCon.getContentType();
+            String id = UUID.randomUUID().toString();
+
+            if( w.contains( "html" ) )
+            {
+                // channel reads byte by byte
+                ReadableByteChannel rbc = Channels.newChannel( url.openStream() );
+
+                @SuppressWarnings("resource")
+                FileOutputStream fos = new FileOutputStream( "D:/Neil/" + id
+                    + ".html" );
+                fos.getChannel().transferFrom( rbc, 0, Long.MAX_VALUE );
+                String path = "D:/Neil/" + id + ".html";
+                linklist2.add( path );
+                i++;
+                obj.put( "storage", path );
+            }
+
+        }
+        catch( NullPointerException e )
+        {
+
+        }
+
+        for( Link link : links )
+        {
+            String anchor = link.getUri();
+            if( !anchor.startsWith( "htt" ) )
+            {
+                anchor = url + anchor;
+            }
+
+            JSONObject obj2 = new JSONObject();
+            int dep = Integer.parseInt( depth );
+            if( h < dep )
+            {
+                if( !myQueue.contains( anchor ) )
+                {
+                    myQueue.add( anchor );
+                }
+            }
+            String name = link.getText();
+            obj2.put( "text", name );
+            obj2.put( "URL", anchor );
+            company.add( obj2 );
+        }
+        obj.put( "Links", company );
+        h++;
+
+        for( String v : myQueue )
+        {
+            if( !v.startsWith( "#" ) && !v.startsWith( "/" )
+                || v.startsWith( "http" ) || v.startsWith( "https" ) ) try
+            {
+
+                crawl( v, depth );
+            }
+            catch( MalformedURLException malformedException )
+            {
+
+            }
+            catch( FileNotFoundException e )
+            {
+
+            }
+            catch( IOException ex )
+            {
+            }
+        }
+
+        File f = new File( "D:/Neil/Crawl.json" );
+
+        BufferedWriter file = new BufferedWriter( new FileWriter( f, true ) );
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            file.write( mapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString( obj ) );
+            System.out.println( mapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString( obj ) );
+            file.newLine();
+            file.newLine();
+            file.newLine();
+            file.newLine();
+
+        }
+        catch( IOException e )
+        {
+            e.printStackTrace();
+
+        }
+        finally
+        {
+            file.flush();
+            file.close();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void extract( String c ) throws IOException, SAXException,
+        TikaException
+    {
+
+        final InputStream in = new FileInputStream( "D:/Neil/" + c );
+
+        try
+        {
+            for( @SuppressWarnings("rawtypes")
+            Iterator it = new ObjectMapper().readValues(
+                new JsonFactory().createJsonParser( in ), Map.class ); it.hasNext(); )
+            {
+
+                LinkedHashMap<String, String> keyValue = (LinkedHashMap<String, String>) it.next();
+                try
+                {
+                    BodyContentHandler handler = new BodyContentHandler();
+                    Metadata metadata = new Metadata();
+                    System.out.println( keyValue.get( "storage" ) );
+                    FileInputStream inputstream = new FileInputStream(
+                        keyValue.get( "storage" ) );
+                    ParseContext pcontext = new ParseContext();
+                    AutoDetectParser msofficeparser = new AutoDetectParser();
+                    msofficeparser.parse( inputstream, handler, metadata,
+                        pcontext );
+
+                    JSONObject obj = new JSONObject();
+                    obj.put( "path", keyValue.get( "storage" ) );
+                    obj.put( "url", keyValue.get( "URL" ) );
+                    for( int i = 0; i < metadata.names().length; i++ )
+                    {
+                        String name = metadata.names()[i];
+                        obj.put( name, metadata.get( name ) );
+                    }
+                    File f2 = new File( "D:/Neil/Extract.json" );
+                    BufferedWriter file2 = new BufferedWriter( new FileWriter(
+                        f2, true ) );
+                    try
+                    {
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        file2.write( mapper.writerWithDefaultPrettyPrinter()
+                            .writeValueAsString( obj ) );
+                        System.out.println( mapper.writerWithDefaultPrettyPrinter()
+                            .writeValueAsString( obj ) );
+                        file2.newLine();
+                        file2.newLine();
+                        file2.newLine();
+                        file2.newLine();
+
+                    }
+                    catch( IOException e )
+                    {
+                        e.printStackTrace();
+
+                    }
+                    finally
+                    {
+                        file2.flush();
+                        file2.close();
+                    }
+
+                }
+                catch( FileNotFoundException e )
+                {
+
+                }
+                catch( RuntimeException e )
+                {
+                    System.out.println( e );
+                }
+            }
+        }
+        finally
+        {
+            in.close();
+        }
+    }
+
+    public static void main( String[] args ) throws Exception
+    {
+
+        // ----for command line----//
+
+        @SuppressWarnings("unused")
+        String v = args[0];
+
+        @SuppressWarnings("unused")
+        String d = args[1];
+        GetOpt options = new GetOpt( "u:d:H", args );
+        String hostname = options.getOptionParam( 'u' );
+        String dep = options.getOptionParam( 'd' );
+        
+        // Extraction Main
+        
+          File f = new File("Extract.json"); // 
+          String controlfile = "Crawl.json"; 
+          if (f.exists()) 
+          { f.delete(); }
+          GetOpt options = new GetOpt("c:H", args); // Get the arguments specified for each option.
+          String controlfile = options.getOptionParam('c');
+          
+          try { new Crawl().extract("Crawl.json"); } catch (Exception e) {
+          
+          }
+        if( args.length == 4 )
+        {
+            new Crawl().crawl( hostname, dep );
+        }
+        else
+        // new Crawl().crawl("http://www.google.com", "1");
+
+       
+         */
+        // InputStream in = new
+        // FileInputStream("D:/crawler3-app/target/"+controlfile);
+
+    }
+}
