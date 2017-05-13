@@ -27,7 +27,7 @@
 * Removes the Stop words like and,a,an etc etc stored in Stop_Words_List.txt
 * Calculate the FREQUENCY(do indexing of the document) of the words in a document and store it JSON format.
 * Calculate TF-IDF, RANK(weight) of the document.
-* Output the highest Ranked page based on the Word/Query Search. 
+* Output the highest Ranked page based on the Word/Query Search.     
 
 ###Part 4 :[Searching] 
 
